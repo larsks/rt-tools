@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# escalate-tickets uses findq to select queues for processing, and
+# then calls rt-crontool to apply RT::Action::LinearEscalate to
+# tickets in those queues.
+#
+# escalate-tickets selects queues that have the "Processing flags"
+# custom field set to "Escalate".
+
+FINDQ=/etc/rt3/scripts/findq
+
+for q in $($FINDQ -f "Processing flags" -v "Escalate"); do
+	echo "=== $q ==="
+	/usr/sbin/rt-crontool \
+		--search RT::Search::ActiveTicketsInQueue \
+		--search-arg $q \
+		--action RT::Action::LinearEscalate \
+		--action-arg "UpdateLastUpdated: 0"
+done
+

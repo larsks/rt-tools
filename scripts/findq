@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+#
+# Generates a list of RT queue names by searching for queues
+# that have a specific custom field set to a specific value.
+
+use strict;
+use Getopt::Long qw(:config ignorecase bundling);
+
+use RT;
+use RT::Queues;
+use RT::CustomFields;
+
+use vars qw($opt_field @opt_value $opt_fieldsep $opt_help);
+
+$opt_fieldsep = "\n";
+
+GetOptions(
+	'field|f=s',
+	'value|v=s@',
+	'fieldsep|F=s',
+	'help|h',
+);
+
+if ($opt_help) {
+	print "$0: usage: $0 [ -f <fieldname> ] [ -v <value> ] [ -F <fieldsep> ]\n";
+	exit(0);
+}
+
+RT->LoadConfig;
+RT->Init;
+
+my $fields = RT::CustomFields->new( $RT::SystemUser );
+$fields->UnLimit;
+$fields->Limit(
+	FIELD => 'Name',
+	VALUE => $opt_field,
+);
+
+die "Unable to find custom field named \"$opt_field\".\n" unless $fields->First;
+my $poid = $fields->First->id;
+
+my %found;
+for my $val (@opt_value) {
+	my $queues = RT::Queues->new( $RT::SystemUser );
+	$queues->LimitCustomField(
+		CUSTOMFIELD => $poid,
+		OPERATOR => '=',
+		VALUE => $val
+	);
+
+	while (my $queue = $queues->Next) {
+		$found{$queue->Name}++;
+	}
+}
+
+print join($opt_fieldsep, keys %found), "\n";
+

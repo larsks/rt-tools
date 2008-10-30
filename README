@@ -1,0 +1,23 @@
+Scripts
+-------
+
+findq - Generate a list of queues by matching a custom field.  We use this to
+select queues for rt-crontool processing using a custom field named
+"Processing flags".
+
+escalate-tickets - Uses findq and rt-controol to apply
+RT::Action::LinearEscalate to selected queues.
+
+shred-tickets - Uses findq and rt-shredder to remove deleted tickets.
+
+Custom fields
+-------------
+
+Many of these scripts rely on the "Processing flags" custom field, defined
+in customfields.xml.
+
+Author
+------
+
+Lars Kellogg-Stedman <lars@oddbit.com>
+

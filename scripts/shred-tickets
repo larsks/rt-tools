@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# sjred-tickets uses findq to select queues for processing, and
+# then calls rt-shredder to delete deleted tickets from the 
+# database.
+#
+# shred-tickets selects queues that have the "Processing flags"
+# custom field set to "Shred".
+
+FINDQ=/etc/rt3/scripts/findq
+
+cd /var/lib/rt3/data/RT-Shredder || exit 1
+
+for q in $($FINDQ -f "Processing flags" -v "Shred"); do
+	echo "=== $q ==="
+	/usr/sbin/rt-shredder --plugin \
+		Tickets=query,"Queue = '$q' AND Status = 'deleted'" \
+		--force
+done
+

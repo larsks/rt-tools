@@ -1,0 +1,20 @@
+<CustomFields>
+	<Description>Used by external scripts to identify target queues.</Description>
+	<LookupType>RT::Queue</LookupType>
+	<MaxValues>0</MaxValues>
+	<Name>Processing flags</Name>
+	<Repeated>0</Repeated>
+	<SortOrder>0</SortOrder>
+	<Type>Select</Type>
+	<Values>
+		<Description></Description>
+		<Name>Escalate</Name>
+		<SortOrder>0</SortOrder>
+	</Values>
+	<Values>
+		<Description></Description>
+		<Name>Shred</Name>
+		<SortOrder>0</SortOrder>
+	</Values>
+</CustomFields>
+
